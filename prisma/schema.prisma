@@ -1,0 +1,82 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["omitApi", "postgresqlExtensions"]
+}
+
+datasource db {
+  provider   = "postgresql"
+  url        = env("DATABASE_URL")
+  directUrl  = env("DIRECT_URL")
+  extensions = [vector]
+}
+
+model Recipe {
+  id                 String                      @id @default(uuid()) @db.Uuid
+  link               String
+  title              String
+  thumbnail          String? // Ảnh đại diện món ăn (có thể có hoặc không)
+  tutorial           String
+  quantitative       String
+  ingredientTitle    String
+  ingredientMarkdown String
+  stepMarkdown       String
+  embeded            Unsupported("vector(768)")?
+  tutorialSteps      Step[] // Các bước hướng dẫn
+  ingredients        Ingredient[] // Nguyên liệu của công thức
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  History History[]
+}
+
+model Step {
+  id         String   @id @default(uuid()) @db.Uuid
+  recipeId   String   @db.Uuid
+  recipe     Recipe   @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+  index      Int
+  title      String?  @default("")
+  content    String?  @default("")
+  boxGallery String[] @default([]) // Danh sách hình ảnh minh họa
+}
+
+model Ingredient {
+  id       String @id @default(uuid()) @db.Uuid
+  recipeId String @db.Uuid
+  recipe   Recipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+  name     String
+  quantity String // Ví dụ: "3 quả", "200ml"
+  unit     String // Đơn vị đo lường
+
+  Pantry Pantry[]
+}
+
+model User {
+  id          String   @id @default(uuid()) @db.Uuid
+  email       String   @unique
+  password    String
+  pantry      Pantry[] // Tủ lạnh cá nhân
+  preferences String[] // Ví dụ: ["vegetarian", "gluten-free"]
+  createdAt   DateTime @default(now())
+
+  History History[]
+}
+
+model Pantry {
+  id           String     @id @default(uuid()) @db.Uuid
+  userId       String     @db.Uuid
+  user         User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  ingredientId String     @db.Uuid
+  ingredient   Ingredient @relation(fields: [ingredientId], references: [id], onDelete: Cascade)
+  quantity     String // Ví dụ: "2 quả", "500g"
+  expiresAt    DateTime? // Hạn sử dụng
+}
+
+model History {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String   @db.Uuid
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  recipeId  String   @db.Uuid
+  recipe    Recipe   @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+}

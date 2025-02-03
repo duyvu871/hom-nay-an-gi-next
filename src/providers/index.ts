@@ -1,0 +1,1 @@
+import { default as HerouiProvider } from "./heroui-provider.tsx"

@@ -1,0 +1,114 @@
+{
+  "compilerOptions": {
+    "composite": false,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "allowImportingTsExtensions": true,
+    "noEmit": true,
+    "inlineSources": false,
+    "isolatedModules": true,
+    "moduleResolution": "Bundler",
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "preserveWatchOutput": true,
+    "skipLibCheck": true,
+    "downlevelIteration": true,
+    "baseUrl": "./",
+    "paths": {
+      "@app/*": [
+        "./src/app/*"
+      ],
+      "@api/*": [
+        "./src/api-client/*"
+      ],
+      "@component/*": [
+        "./src/components/*"
+      ],
+      "@global/*": [
+        "./src/global/*"
+      ],
+      "@globals/constant/*": [
+        "./src/globals/constants/*"
+      ],
+      "@context/*": [
+        "./src/contexts/*"
+      ],
+      "@layout/*": [
+        "./src/layouts/*"
+      ],
+      "@provider/*": [
+        "./src/providers/*"
+      ],
+      "@service/*": [
+        "./src/services/*"
+      ],
+      "@section/*": [
+        "./src/sections/*"
+      ],
+      "@store/*": [
+        "./src/stores/*"
+      ],
+      "@container/*": [
+        "./src/containers/*"
+      ],
+      "@route/*": [
+        "./src/routes/*"
+      ],
+      "@schema/*": [
+        "./src/schemas/*"
+      ],
+      "@lib/*": [
+        "./src/libs/*"
+      ],
+      "config": [
+        "./src/global-config.ts"
+      ],
+      "@page/*": [
+        "./src/pages/*"
+      ],
+      "@style/*": [
+        "./src/styles/*"
+      ],
+      "@util/*": [
+        "./src/utils/*"
+      ],
+      "@hook/*": [
+        "./src/hooks/*"
+      ],
+      "@type/*": [
+        "./src/types/*"
+      ],
+      "@interface/*": [
+        "./src/interfaces/*"
+      ],
+      "@supabase/*": [
+        "./supabase/*"
+      ],
+    },
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "strictNullChecks": true,
+    "allowJs": true,
+    "declaration": false,
+    "declarationMap": false,
+    "incremental": true,
+    "jsx": "preserve",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "module": "esnext",
+    "resolveJsonModule": true,
+    "strict": true,
+    "target": "es2018"
+  },
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}
