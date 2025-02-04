@@ -63,7 +63,7 @@ const VibratingQuote = ({
 
 	return (
 		<div
-			className="min-h-screen flex items-center justify-center bg-gray-100"
+			className="py-5 flex items-center justify-center"
 			onMouseEnter={() => {
 				setShowCopyButton(true);
 				setIsHovered(true);
@@ -76,9 +76,7 @@ const VibratingQuote = ({
 			aria-label="Quote container"
 		>
 			<div
-				className={`relative max-w-md p-8 bg-white rounded-lg shadow-lg transition-transform ${
-					isVibrating ? `animate-vibration-${vibrationIntensity}` : ''
-				}`}
+				className={`relative max-w-md p-8 bg-white rounded-2xl shadow-lg transition-transform`}
 				style={{
 					transform: isHovered ? 'scale(1.02)' : 'scale(1)',
 				}}
@@ -102,16 +100,16 @@ const VibratingQuote = ({
 				)}
 
 				<div className="relative">
-					<svg
-						className="absolute -top-4 -left-6 w-16 h-16 text-gray-200"
-						fill="currentColor"
-						viewBox="0 0 100 100"
-						aria-hidden="true"
-					>
-						<path d="M30 20 L20 50 L30 80 L70 80 L80 50 L70 20 Z" />
-					</svg>
+					{/*<svg*/}
+					{/*	className="absolute -top-4 -left-6 w-16 h-16 text-gray-200"*/}
+					{/*	fill="currentColor"*/}
+					{/*	viewBox="0 0 100 100"*/}
+					{/*	aria-hidden="true"*/}
+					{/*>*/}
+					{/*	<path d="M30 20 L20 50 L30 80 L70 80 L80 50 L70 20 Z" />*/}
+					{/*</svg>*/}
 
-					<blockquote className="text-2xl font-medium text-gray-800" cite={author}>
+					<blockquote className="text-xl font-medium text-gray-800" cite={author}>
 						&ldquo;{quote}&rdquo;
 					</blockquote>
 

@@ -106,5 +106,13 @@ export const queryRecipe = async (embed: {
 			tutorialSteps: true
 		}
 	});
-	return queryDetail;
+	const parsedQueryDetail = queryDetail.map(qd => {
+		const {tutorialSteps, ...rest} = qd;
+		return ({
+			...rest,
+			tutorial_step: tutorialSteps
+		})
+	});
+
+	return parsedQueryDetail;
 }

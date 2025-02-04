@@ -58,8 +58,8 @@ export async function POST(req: NextRequest) {
 		const ai = parsedResponse.ai;
 		const embedding = parsedResponse.embedding;
 
+		console.log('ai', ai);
 		console.log('embedding', embedding);
-
 		// const embedIngredientVector = await llm.generateEmbedding(embedding.ingredient);
 		// const embedNameVector = await llm.generateEmbedding(embedding.name);
 
@@ -78,6 +78,7 @@ export async function POST(req: NextRequest) {
 			recipes: embedQuery,
 		}).toJson;
 		return NextResponse.json(success);
+
 	} catch (error) {
 		console.log('error', error);
 		if (error instanceof z.ZodError) {

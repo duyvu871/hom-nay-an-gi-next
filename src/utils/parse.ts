@@ -52,10 +52,3 @@ export function parseContent(input: string): ParseResult {
 		}
 	};
 }
-
-
-(() => {
-	const input = `[ai]Thời tiết oi nóng mà muốn ăn các món tốt cho sức khỏe thì bạn nên ưu tiên các món thanh đạm, nhiều rau xanh và chất xơ nhé. Các món salad, gỏi cuốn, canh rau củ, hoặc các món hấp là những gợi ý tuyệt vời. Bạn cũng có thể thử các món súp hoặc chè thanh mát để giải nhiệt. Quan trọng là nên chọn thực phẩm tươi, ít dầu mỡ để cơ thể cảm thấy nhẹ nhàng và thoải mái hơn.[/ai][embeding][ingredient]rau xà lách, dưa chuột, cà rốt, tôm, thịt luộc, bún, đậu phụ, nấm, bí đao[/ingredient][name]salad, gỏi cuốn, canh rau củ, súp, chè đậu xanh, nộm[/name][/embeding]  `
-	const result = parseContent(input);
-	console.log(result);
-})()
