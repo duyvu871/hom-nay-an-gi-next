@@ -16,6 +16,7 @@ import { Spinner, Textarea } from '@heroui/react';
 import { cn } from '@lib/tailwind-merge.ts';
 import GradientBlobs from '@component/HeroSection/gradient-blobs.tsx';
 import BlobAnimation from '@component/HeroSection/blob-animation.tsx';
+import VibratingQuote from '@component/Quote/vibration-quote.tsx';
 
 const promptValidate = z.object({
   prompt: z.string().nonempty({ message: "Prompt cannot be empty" }),
@@ -160,15 +161,9 @@ const MainHero = () => {
         )}
         {/*<BlobAnimation />*/}
         {message && (
-          <Textarea
-            isDisabled
-            className="max-w-3xl mb-8"
-            classNames={{
-              mainWrapper: 'bg-primary',
-            }}
-            defaultValue={message}
-            labelPlacement="outside"
-            placeholder="Enter your description"
+          <VibratingQuote
+            quote={message}
+            author={"AI Agent"}
           />
         )}
 

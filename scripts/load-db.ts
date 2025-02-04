@@ -69,7 +69,7 @@ const loadDb = async () => {
 		const apiKey = env.GEMINI_API_KEY;
 		if (!apiKey) throw new Error("GEMINI_API_KEY is missing from .env file");
 
-		const llm = new GeminiChatService(apiKey);
+		const llm = new GeminiChatService("AIzaSyDr1_-KpzxtXV0l6rPhnG6xHhWxa3raUxY");
 		// Đường dẫn đến file nén
 		const filePath = path.resolve(__dirname, "../resources/recipes.json.gz");
 		// Tạo ReadStream từ file Gzip JSON
@@ -87,17 +87,30 @@ const loadDb = async () => {
 				try {
 					await client.query("BEGIN");
 
-					const embedded = await llm.generateEmbedding(
-						[
-							value.title || "",
-							value.ingredient_title || "",
-							value.tutorial || "",
-							value.tutorial || "",
-							value.quantitative || "",
-							value.tutorial_step.map(step => step.title || "").join(", ")
-						].join(", ")
-					);
-					const embeddedVector = pgvector.toSql(embedded);
+					// const [embeddedName, embeddedIngredient] = await Promise.all([
+					// 	llm.generateEmbedding([
+					// 		value.title || "",
+					// 		value.tutorial || "",
+					// 	].join(", ")),
+					// 	llm.generateEmbedding([
+					// 		value.ingredient_title || "",
+					// 		value.ingredients.map(ingredient => ingredient.name || "").join(", "),
+					// 		value.quantitative || "",
+					// 	].join(", "))
+					// ])
+
+					const embeddedName = await llm.generateEmbedding([
+						value.title || "",
+						value.tutorial || "",
+					].join(", "));
+					const embeddedIngredient = await llm.generateEmbedding([
+						value.ingredient_title || "",
+						value.ingredients.map(ingredient => ingredient.name || "").join(", "),
+						value.quantitative || "",
+					].join(", "));
+
+					const embeddedNameVector = pgvector.toSql(embeddedName);
+					const embeddedIngedientVector = pgvector.toSql(embeddedIngredient);
 					const recipeResult = await client.query(
 						`INSERT INTO "Recipe" (
 								"id", 
@@ -109,7 +122,8 @@ const loadDb = async () => {
 								"ingredientTitle", 
                 "ingredientMarkdown",
                 "stepMarkdown", 
-                "embeded",
+                "embeded_name",
+            		"embeded_ingredient",
                 "createdAt", 
                 "updatedAt"
 							) VALUES (
@@ -123,6 +137,7 @@ const loadDb = async () => {
 							  $7, 
 							  $8, 
 							  $9,
+							  $10,
 							  NOW(),
 							  NOW()
 							) RETURNING id`,
@@ -135,7 +150,8 @@ const loadDb = async () => {
 							value.ingredient_title || "",
 							value.ingredient_markdown || "",
 							value.step_markdown || "",
-							embeddedVector
+							embeddedNameVector,
+							embeddedIngedientVector
 						]
 					);
 					const recipeId = recipeResult.rows[0].id;
@@ -192,7 +208,7 @@ const loadDb = async () => {
 	}
 };
 
-// loadDb();
+loadDb();
 
 
 const BATCH_SIZE = 100; // Adjust based on memory/API limits
@@ -272,4 +288,4 @@ const updateRecipeEmbeddings = async () => {
 	}
 };
 
-updateRecipeEmbeddings();
+// updateRecipeEmbeddings();

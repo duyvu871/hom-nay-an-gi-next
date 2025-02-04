@@ -3,8 +3,23 @@ import {Prisma} from "@prisma/client"
 import pgvector from 'pgvector';
 import prisma from '@lib/prisma.ts';
 
-export const queryRecipe = async (embedding:  number[]) => {
-	const embeddedVector = pgvector.toSql(embedding);
+export const queryRecipe = async (embed: {
+	ingredients: number[],
+	name: number[],
+}) => {
+
+	if (!embed) {
+		console.log('embed', embed);
+		throw new Error('Embedding is required');
+	}
+
+	if (!embed.ingredients || !embed.name) {
+		console.log('embed', embed);
+		throw new Error('Embedding is required');
+	}
+
+	const embeddedIngredientVector = pgvector.toSql(embed.ingredients);
+	const embeddedNameVector = pgvector.toSql(embed.name);
 
 	const query = `
 					SELECT
@@ -17,7 +32,10 @@ export const queryRecipe = async (embedding:  number[]) => {
 --               "ingredientTitle",
 --               "ingredientMarkdown",
 --               "stepMarkdown",
-              embeded <=> $1::vector(768) AS distance
+                (
+                0.5 * (embeded_ingredient <=> $1::vector(768))
+                + 0.5 * (embeded_name <=> $2::vector(768))
+            		)AS distance
 					FROM "public"."Recipe"
 					ORDER BY distance
           LIMIT 10
@@ -73,11 +91,7 @@ export const queryRecipe = async (embedding:  number[]) => {
 		select: {
 			id: true,
 		},
-		// include: {
-		// 	tutorialSteps: true,
-		// 	ingredients: true
-		// }
-	}>>(query, [embeddedVector]);
+	}>>(query, [embeddedIngredientVector, embeddedNameVector]);
 	const result = res.rows;
 	console.log('result', result);
 
@@ -92,14 +106,5 @@ export const queryRecipe = async (embedding:  number[]) => {
 			tutorialSteps: true
 		}
 	});
-
-	console.log('queryDetail', queryDetail.map(value => [
-		value.title || "",
-		value.ingredientTitle || "",
-		value.tutorial || "",
-		value.tutorial || "",
-		value.quantitative || "",
-		value.tutorialSteps.map(step => step.title || "").join(", ")
-	].join(", ")).length);
 	return queryDetail;
 }

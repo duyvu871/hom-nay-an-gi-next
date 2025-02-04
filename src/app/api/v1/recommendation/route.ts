@@ -60,10 +60,18 @@ export async function POST(req: NextRequest) {
 
 		console.log('embedding', embedding);
 
-		const embedVector = await llm.generateEmbedding(embedding);
+		// const embedIngredientVector = await llm.generateEmbedding(embedding.ingredient);
+		// const embedNameVector = await llm.generateEmbedding(embedding.name);
 
+		const [embedIngredientVector, embedNameVector] = await Promise.all([
+			llm.generateEmbedding(embedding.ingredient),
+			llm.generateEmbedding(embedding.name),
+		]); // [embedIngredientVector, embedNameVector]
 
-		const embedQuery = await queryRecipe(embedVector);
+		const embedQuery = await queryRecipe({
+			ingredients: embedIngredientVector,
+			name: embedNameVector,
+		});
 
 		const success = new Success({
 			message: ai,

@@ -20,7 +20,8 @@ model Recipe {
   ingredientTitle    String
   ingredientMarkdown String
   stepMarkdown       String
-  embeded            Unsupported("vector(768)")?
+  embeded_ingredient Unsupported("vector(768)")?
+  embeded_name       Unsupported("vector(768)")?
   tutorialSteps      Step[] // Các bước hướng dẫn
   ingredients        Ingredient[] // Nguyên liệu của công thức
 
