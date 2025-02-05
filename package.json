@@ -59,7 +59,8 @@
     "uuid": "^10.0.0",
     "zod": "^3.23.7",
     "prisma": "^6.2.1",
-    "fuse.js": "^7.1.0"
+    "fuse.js": "^7.1.0",
+    "worker-timers": "^8.0.13"
   },
   "devDependencies": {
     "@iconify/react": "^5.2.0",
