@@ -1,6 +1,6 @@
 import "@style/globals.css";
 import type { Metadata, Viewport } from "next";
-import { Inter as FontSans , Montserrat} from "next/font/google";
+import { Inter as FontSans , Montserrat, Nunito_Sans} from "next/font/google";
 import {cn} from "@lib/tailwind-merge";
 import { ThemeProvider } from "@layout/global-theme";
 import {HeroUIProvider} from "@heroui/react";
@@ -13,6 +13,12 @@ const montserrat = Montserrat({
     display: 'swap',
     fallback: ['sans-serif'],
 })
+const nunito_sans = Nunito_Sans({
+    weight: ['300', '400', '500', '700'],
+    subsets: ['latin'],
+    display: 'swap',
+    fallback: ['sans-serif'],
+});
 
 const fontSans = FontSans({
     subsets: ['latin', 'vietnamese'],
@@ -52,7 +58,7 @@ export default function RootLayout({
         {/*	/>*/}
         {/*	<title></title>*/}
         {/*</head>*/}
-        <body className={cn(montserrat.className, "min-h-dvh  antialiased ")}>
+        <body className={cn(nunito_sans.className, "min-h-dvh  antialiased ")}>
         <ThemeProvider
             attribute="class"
             defaultTheme="light"
