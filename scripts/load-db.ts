@@ -69,7 +69,7 @@ const loadDb = async () => {
 		const apiKey = env.GEMINI_API_KEY;
 		if (!apiKey) throw new Error("GEMINI_API_KEY is missing from .env file");
 
-		const llm = new GeminiChatService("AIzaSyDr1_-KpzxtXV0l6rPhnG6xHhWxa3raUxY");
+		const llm = new GeminiChatService(process.env.GEMINI_API_KEY);
 		// Đường dẫn đến file nén
 		const filePath = path.resolve(__dirname, "../resources/recipes.json.gz");
 		// Tạo ReadStream từ file Gzip JSON
