@@ -22,14 +22,16 @@ const RecipeViewer: React.FC<{ recipe: Recipe }> = ({ recipe }) => {
 								src={recipe.thumbnail || "/placeholder.svg"}
 								alt={recipe.title}
 								layout="fill"
-								objectFit="cover"
-								className="rounded-lg"
+								objectFit="contain"
+								className="rounded-lg bg-zinc-100"
 							/>
 						</ImageWrapper>
 					</div>
 				)}
 				<p className="text-gray-600 text-center mb-4">{recipe.tutorial}</p>
-				<h3 className="text-xl font-semibold my-4">Ingredients:</h3>
+				<h3 className="text-xl font-semibold my-4">
+					Thành phần cần chuẩn bị :
+				</h3>
 				<ul className="space-y-2">
 					{recipe.ingredients.map((ingredient, index) => (
 						<li key={index} className="flex justify-between items-center">
@@ -38,7 +40,9 @@ const RecipeViewer: React.FC<{ recipe: Recipe }> = ({ recipe }) => {
 						</li>
 					))}
 				</ul>
-				<h3 className="text-xl font-semibold my-4">Tutorial:</h3>
+				<h3 className="text-xl font-semibold my-4">
+					Cách thực hiện :
+				</h3>
 				{recipe.tutorial_step.map((step, index) => (
 					<div key={index} className="mb-6 last:mb-0">
 						<h4 className="text-lg font-semibold mb-2">

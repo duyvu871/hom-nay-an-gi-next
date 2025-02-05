@@ -1,7 +1,7 @@
 
 "use client"
 
-import React, { useState } from "react"
+import React, { useEffect, useState } from 'react';
 // import Image from "next/image"
 import { motion } from "framer-motion"
 import { Card, CardHeader, CardBody, CardFooter } from '@heroui/card';
@@ -23,6 +23,10 @@ const RecipeList: React.FC<RecipeListProps> = ({ recipes }) => {
 
 	const separateRecipe = separateArrayByTotalBatch(recipes, 3);
 
+	useEffect(() => {
+		setSelectedRecipe(null)
+	}, [recipes]);
+
 	return (
 		<div className="max-w-6xl mx-auto my-4">
 
@@ -30,7 +34,7 @@ const RecipeList: React.FC<RecipeListProps> = ({ recipes }) => {
 				<div>
 					<Button onPress={() => setSelectedRecipe(null)} className="mb-4 bg-primary font-semibold text-white"
 									variant="flat">
-						Back to Recipe List
+						Trở lại danh sách
 					</Button>
 					<RecipeViewer recipe={selectedRecipe} />
 				</div>
