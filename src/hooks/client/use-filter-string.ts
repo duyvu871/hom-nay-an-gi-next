@@ -1,5 +1,4 @@
 import { useCallback, useState } from "react";
-import { DoctorSchema } from '@schema/doctor-schema.ts';
 
 export type FilterString = string;
 export type FilterKey = string;
