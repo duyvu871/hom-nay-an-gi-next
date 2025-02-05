@@ -1,4 +1,5 @@
-import { ErrorMessage } from "../../common/types";
+import { ErrorMessage } from '@interface/api/types.ts';
+
 
 class InternalServerError extends Error {
     public readonly statusCode: number = 500;
