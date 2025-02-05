@@ -27,7 +27,7 @@ const validateBody = z.object({
 	})
 });
 
-export type RecommendationBody = z.infer<typeof validateBody>;
+type RecommendationBody = z.infer<typeof validateBody>;
 
 export async function POST(req: NextRequest) {
 	try {
