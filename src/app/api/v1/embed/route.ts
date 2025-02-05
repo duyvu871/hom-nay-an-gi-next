@@ -15,9 +15,7 @@ import { pipeline } from 'node:stream';
 import { ChatbotService } from '@lib/llm/base.ts';
 import { GeminiChatService } from '@lib/llm/gemini.ts';
 
-const asyncPipeline = promisify(chain);
-
-export const validateBody = z.object({
+const validateBody = z.object({
 	prompt: z.string({
 		message: 'Prompt is required'
 	}),

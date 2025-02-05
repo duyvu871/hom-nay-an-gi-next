@@ -18,7 +18,7 @@ import { queryRandomRecipe, queryRecipe } from '@service/pgvector.ts';
 
 const asyncPipeline = promisify(chain);
 
-export const validateBody = z.object({
+const validateBody = z.object({
 	prompt: z.string({
 		message: 'Prompt is required'
 	}),
