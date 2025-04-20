@@ -10,11 +10,11 @@ interface VibratingQuoteProps {
 }
 
 const VibratingQuote = ({
-													quote,
-													author,
-													vibrationIntensity = 2,
-													enableVibration = true,
-												}: VibratingQuoteProps) => {
+	quote,
+	author,
+	vibrationIntensity = 2,
+	enableVibration = true,
+}: VibratingQuoteProps) => {
 	const [isVibrating, setIsVibrating] = useState(false);
 	const [showCopyButton, setShowCopyButton] = useState(false);
 	const [isCopied, setIsCopied] = useState(false);
@@ -76,7 +76,7 @@ const VibratingQuote = ({
 			aria-label="Quote container"
 		>
 			<div
-				className={`relative max-w-md p-8 bg-white rounded-2xl shadow-lg transition-transform`}
+				className={`relative max-w-md md:max-w-3xl p-8 bg-white rounded-2xl shadow-lg transition-transform`}
 				style={{
 					transform: isHovered ? 'scale(1.02)' : 'scale(1)',
 				}}

@@ -1,8 +1,5 @@
 import type {ChatbotService as ChatbotServiceBase} from '@lib/llm/base';
 import { GeminiChatService as Chatbot } from '@lib/llm/gemini';
-
-import type { Content } from '@google/generative-ai';
-import { initAI } from '@lib/llm/init';
 import * as process from 'node:process';
 import type { modelsEnum } from '@lib/llm/models-definition';
 import { SendMessageResponse } from '@type/services/agent-recommend.ts';

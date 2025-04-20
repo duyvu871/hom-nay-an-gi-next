@@ -4,6 +4,7 @@ import type {
 	GenerativeModel,
 	Part,
 	SafetySetting} from '@google/generative-ai';
+import { GoogleGenAI } from "@google/genai";
 import {
 	GoogleGenerativeAI,
 	HarmBlockThreshold,
@@ -12,6 +13,8 @@ import {
 import { initAI } from './init';
 import { ChatbotService } from '@lib/llm/base';
 import { llmSystemInstructions } from '@globals/constant/system';
+import { GoogleGenerativeAIEmbeddings } from "@langchain/google-genai";
+import { TaskType } from "@google/generative-ai";
 
 export type MimeTypes =
 	'image/png'
@@ -54,8 +57,9 @@ export type MimeTypes =
 
 export class GeminiChatService extends ChatbotService {
 	private genAI: GoogleGenerativeAI;
+	private embed: GoogleGenAI;
 	private model: GenerativeModel;
-	private embedAI: GenerativeModel;
+	private embedModel: string;
 
 	protected errorResponse = 'Xin lỗi, agent gặp sự cố trong quá trình xử lý yêu cầu của bạn. Vui lòng thử lại sau.';
 	protected generationConfig: GenerationConfig;
@@ -64,20 +68,22 @@ export class GeminiChatService extends ChatbotService {
 	constructor(apiKey: string) {
 		super();
 		this.genAI = new GoogleGenerativeAI(apiKey);
+		this.embed = new GoogleGenAI({
+			apiKey,
+		});
+		
 		this.model = this.genAI.getGenerativeModel({
-			model: "gemini-2.0-flash-exp",
+			model: "gemini-2.0-flash-thinking-exp-01-21",
 			systemInstruction: llmSystemInstructions,
 		});
 
-		this.embedAI = this.genAI.getGenerativeModel({
-			model: "text-embedding-004"
-		});
+		this.embedModel = "text-embedding-004";
 
 		this.generationConfig = {
 			temperature: 1,
 			topP: 0.95,
 			topK: 39,
-			maxOutputTokens: 8192,
+			maxOutputTokens: 65536,
 			responseMimeType: 'text/plain',
 		};
 		this.safetySettings = [
@@ -100,10 +106,27 @@ export class GeminiChatService extends ChatbotService {
 		];
 	}
 
+	// public async generateEmbeddingDoc(text: string | string[]) {
+	// 	if (typeof text === 'string') {
+	// 		return (await this.embed.embedDocuments([text])).flat();
+	// 	}
+	// 	const response = await this.embed.embedDocuments(text);
+	// 	// // console.log("embedded", response.embedding.values);
+	// 	// console.log("embedded", response.embeddings);
+	// 	// console.log("embedded", response.embeddings?.[0]?.values?.length);
+	// 	return response.flat();
+	// }
+
 	public async generateEmbedding(text: string) {
-		const response = await this.embedAI.embedContent(text);
-		// console.log("embedded", response.embedding.values);
-		return response.embedding.values;
+		const response = await this.embed.models.embedContent({
+			model: this.embedModel,
+			contents: text,
+			config: {
+				taskType: TaskType.RETRIEVAL_DOCUMENT,
+				outputDimensionality: 3072,
+			}
+		});
+		return response.embeddings?.[0]?.values ?? [];
 	}
 
 

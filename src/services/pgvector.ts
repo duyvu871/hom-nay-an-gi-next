@@ -6,6 +6,8 @@ import prisma from '@lib/prisma.ts';
 export const queryRecipe = async (embed: {
 	ingredients: number[],
 	name: number[],
+	ingredientString: string,
+	nameString: string,
 }) => {
 
 	if (!embed) {
@@ -21,19 +23,53 @@ export const queryRecipe = async (embed: {
 	const embeddedIngredientVector = pgvector.toSql(embed.ingredients);
 	const embeddedNameVector = pgvector.toSql(embed.name);
 
+	const parseName = embed.ingredientString.split(',').map(i => i.trim().split(' ')).flat();
+	const parseIngredient = embed.nameString.split(',').map(i => i.trim().split(' ')).flat();
+
 	const query = `
-      WITH closest_recipes AS (
+      WITH word_matches AS (
+          SELECT
+              r.id AS recipe_id,
+              r.title,
+              r."ingredientTitle",
+              (
+                  SELECT COUNT(*)
+                  FROM unnest($3::text[]) AS word
+                  WHERE LOWER(r.title) LIKE '%' || LOWER(word) || '%'
+              ) AS name_match_count,
+              (
+                  SELECT COUNT(*)
+                  FROM unnest($4::text[]) AS word
+                  WHERE LOWER(r."ingredientTitle") LIKE '%' || LOWER(word) || '%'
+              ) AS ingredient_match_count
+          FROM "public"."Recipe" r
+          GROUP BY r.id, r.title, r."ingredientTitle"
+          HAVING
+              (
+                  SELECT COUNT(*)
+                  FROM unnest($3::text[]) AS word
+                  WHERE LOWER(r.title) LIKE '%' || LOWER(word) || '%'
+              ) >= 3
+              AND
+              (
+                  SELECT COUNT(*)
+                  FROM unnest($4::text[]) AS word
+                  WHERE LOWER(r."ingredientTitle") LIKE '%' || LOWER(word) || '%'
+              ) >= 5
+      ),
+      closest_recipes AS (
           SELECT
               id AS recipe_id,
-              title,
-              link,
-              thumbnail,
-              quantitative,
-              "ingredientTitle",
-              "ingredientMarkdown",
-              "stepMarkdown",
-              (0.5 * (embeded_ingredient <=> $1::vector(768)) + 0.5 * (embeded_name <=> $2::vector(768))) AS distance
-          FROM "public"."Recipe"
+              r.title,
+              r.link,
+              r.thumbnail,
+              r.quantitative,
+              r."ingredientTitle",
+              r."ingredientMarkdown",
+              r."stepMarkdown",
+              (0.5 * (r.embeded_ingredient <=> $1::vector(768)) + 0.5 * (r.embeded_name <=> $2::vector(768))) AS distance
+          FROM word_matches
+		  JOIN "public"."Recipe" r ON r.id = word_matches.recipe_id
           ORDER BY distance
           LIMIT 10
           ),
@@ -89,7 +125,7 @@ export const queryRecipe = async (embed: {
       ORDER BY similarity_score DESC;
 	`;
 
-	const res = await client.query(query, [embeddedIngredientVector, embeddedNameVector]);
+	const res = await client.query(query, [embeddedIngredientVector, embeddedNameVector, parseName, parseIngredient]);
 	const result = res.rows;
 	console.log('result', result.map(r => ({
 		// @ts-ignore
@@ -133,7 +169,7 @@ export const queryRandomRecipe = async () => {
               "ingredientMarkdown",
               "stepMarkdown",
               RANDOM() AS random_score  -- Generate random score
-          FROM "public"."Recipe"
+          FROM word_matches
           ORDER BY random_score
           LIMIT 10
           ),

@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 
 function GradientBlobs() {
 	return (
-		<div className="absolute inset-0 overflow-hidden">
+		<div className="absolute inset-0">
 			<motion.div
 				className="absolute w-[30vw] h-[30vw] rounded-full"
 				style={{

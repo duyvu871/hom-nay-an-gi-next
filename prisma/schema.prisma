@@ -11,7 +11,7 @@ datasource db {
 }
 
 model Recipe {
-  id                 String                      @id @default(uuid()) @db.Uuid
+  id                 String                       @id @default(uuid()) @db.Uuid
   link               String
   title              String
   thumbnail          String? // Ảnh đại diện món ăn (có thể có hoặc không)
@@ -20,8 +20,8 @@ model Recipe {
   ingredientTitle    String
   ingredientMarkdown String
   stepMarkdown       String
-  embeded_ingredient Unsupported("vector(768)")?
-  embeded_name       Unsupported("vector(768)")?
+  embeded_ingredient Unsupported("vector(3072)")?
+  embeded_name       Unsupported("vector(3072)")?
   tutorialSteps      Step[] // Các bước hướng dẫn
   ingredients        Ingredient[] // Nguyên liệu của công thức
 

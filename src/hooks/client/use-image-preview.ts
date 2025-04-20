@@ -8,12 +8,7 @@ interface UseImageFromFileReturn {
 	resolveImageUrl: (file: File) => Promise<string | ArrayBuffer | null>;
 }
 
-const useImageFromFile = (): {
-	imageFile: File | null;
-	imageUrl: string | null;
-	resolveImageUrl: (file: File) => Promise<unknown>;
-	onImageFileChange: (event: React.ChangeEvent<HTMLInputElement>) => void
-} => {
+const useImageFromFile = (): UseImageFromFileReturn => {
 	const [imageFile, setImageFile] = useState<File | null>(null);
 	const [imageUrl, setImageUrl] = useState<string | null>(null);
 
@@ -49,7 +44,7 @@ const useImageFromFile = (): {
 			};
 			reader.readAsDataURL(file);
 		});
-	}, []);
+	}, []) as (file: File) => Promise<string | ArrayBuffer | null>;
 
 	return { imageFile, imageUrl, onImageFileChange, resolveImageUrl };
 };

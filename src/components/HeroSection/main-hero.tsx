@@ -28,20 +28,20 @@ import BlobAnimation from '@component/HeroSection/blob-animation.tsx';
 import VibratingQuote from '@component/Quote/vibration-quote.tsx';
 
 const promptValidate = z.object({
-  prompt: z.string().nonempty({ message: "Prompt cannot be empty" }),
-  type: z.enum(["random", "ai-agent"], { message: "Type must be either random or ai-agent" }),
+  prompt: z.string().nonempty({ message: "Vui lòng nhập yêu cầu của bạn" }),
+  type: z.enum(["random", "ai-agent"], { message: "Vui lòng chọn chế độ tìm kiếm" }),
 });
 
 export type Prompt = z.infer<typeof promptValidate>;
 
 const queryModeOptions = [
   {
-    label: "AI Agent",
+    label: "AI Thông Minh",
     value: "ai-agent",
     icon: Shuffle,
   },
   {
-    label: "Random",
+    label: "Ngẫu Nhiên",
     value: "random",
     icon: Bot
   },
@@ -65,7 +65,7 @@ const MainHero = () => {
   });
 
   // custom hook
-  const {showErrorToast, showSuccessToast} = useToast()
+  const { showErrorToast, showSuccessToast } = useToast()
 
   // atom state
   const [recipe, setRecipe] = useAtom(recipeActiveAtom);
@@ -74,7 +74,7 @@ const MainHero = () => {
   // react state
   const [message, setMessage] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
-  const [queryMode, setQueryMode] = useState<"random"|"ai-agent">("ai-agent");
+  const [queryMode, setQueryMode] = useState<"random" | "ai-agent">("ai-agent");
   // refs
   const mainHeroRef = useRef<HTMLDivElement>(null);
   const recipeWrappedRef = useRef<HTMLDivElement>(null);
@@ -90,7 +90,7 @@ const MainHero = () => {
       setLoading(false);
     } catch (error) {
       console.error(error);
-      showErrorToast("Failed to fetch recipes");
+      showErrorToast("Không thể tìm thấy công thức nấu ăn");
     }
   };
 
@@ -111,124 +111,152 @@ const MainHero = () => {
 
   return (
     <>
-      <div ref={mainHeroRef} className="relative min-h-svh flex-1 flex flex-col items-center justify-center px-4 sm:px-6 pt-10 pb-20 z-10">
+      <div ref={mainHeroRef} className="select-none relative min-h-svh flex-1 flex flex-col items-center justify-center px-4 sm:px-6 pt-10 pb-20 z-10">
         <GradientBlobs />
 
         <motion.div
-          className="relative text-center space-y-4 max-w-3xl mb-8 sm:mb-12"
+          className="relative text-center space-y-4 max-w-4xl mb-8 sm:mb-12"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
         >
           <h1 className="text-4xl sm:text-5xl md:text-5xl lg:text-6xl font-bold text-text">
-            Chào Trup, <span className="text-primary">Nay Trup có khỏe hum</span>
+            Bạn đang đói? <span className="text-primary">Hôm nay ăn gì?</span>
           </h1>
-          <div className="bg-primary p-2 sm:p-3 rounded-2xl mx-4 sm:mx-8">
-            <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-white via-primary-light to-white text-transparent bg-clip-text">
-              Trup muốn ăn gì hôm nay? 🤔
+          <div className="inline-block bg-primary p-2 sm:p-3 rounded-2xl mx-4 sm:mx-8">
+            <h2 className="inline-block text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold">
+              <span className='bg-gradient-to-r from-white via-primary-light to-white text-transparent bg-clip-text'>
+                Để AI làm bếp trưởng cho bạn nhé!
+              </span>
+              👨‍🍳
             </h2>
           </div>
-          <p className="text-sm sm:text-base md:text-lg text-text-secondary mt-4 px-4 sm:px-0">
-            Trup có thể nhập câu hỏi hoặc chọn một trong những lựa chọn dưới đây để nhận được gợi ý món ăn ngon nhất
+          <p className="flex flex-col text-sm sm:text-base md:text-lg text-text-secondary mt-4 px-4 sm:px-0">
+            <span>
+              Chia sẻ với tôi món ăn bạn thích, nguyên liệu bạn có, hoặc tâm trạng của bạn,...
+            </span>
+            <span>AI sẽ gợi ý những công thức nấu ăn phù hợp nhất.</span>
           </p>
-      </motion.div>
+        </motion.div>
 
-      <motion.div
-        className="w-full max-w-2xl px-4 sm:px-6"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, delay: 0.2 }}
-      >
-        <div className="relative group">
-          <form onSubmit={handleSubmit(onSubmit, onSubmitInvalid)} className={"flex flex-col gap-5 w-full"}>
-            <div className={"w-full flex justify-center items-center"}>
-              <Controller
-                control={control}
-                name={"type"}
-                render={({field}) => (
-                  <Select
-                    classNames={{
-                      base: "max-w-[200px]",
-                      trigger: "h-12",
-                    }}
-                    items={queryModeOptions}
-                    onSelectionChange={(item) => {
-                      const mode = Object.values(item)[0] as "random"|"ai-agent";
-                      field.onChange(mode);
-                    }}
-                    radius={"lg"}
-                    labelPlacement="outside"
-                    placeholder="Chọn chế độ"
-                    color={"primary"}
-                    variant="bordered"
-                    renderValue={(items) => {
-                      return items.map((item) => (
-                        <div key={item.key} className="flex gap-2 items-center">
-                          {item.data?.icon && <item.data.icon className="text-primary w-5 h-5" />}
-                          <span className="text-primary">{item.data?.label}</span>
-                        </div>
-                      ));
-                    }}
-                  >
-                    {(render) => (
-                      <SelectItem
-                        key={render.value}
-                        textValue={render.label}
-                      >
-                        <div className="flex gap-2 items-center">
-                          <render.icon className="w-5 h-5" />
-                          <span>{render.label}</span>
-                        </div>
-                      </SelectItem>
-                    )}
-                  </Select>
-                )}
-              />
-            </div>
-            <div className={"relative group"}>
-              <Controller
-                name={"prompt"}
-                control={control}
-                render={({ field }) => (
-                  <input
-                    autoComplete={"off"}
-                    autoCapitalize={"off"}
-                    autoCorrect={"off"}
-                    spellCheck={"false"}
-                    type="text"
-                    placeholder="Ask whatever you want..."
-                    className=" w-full px-4 sm:px-6 py-3 sm:py-4 text-base sm:text-lg rounded-2xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary-hover focus:border-transparent pr-16 sm:pr-32 transition-all duration-300 ease-in-out shadow-sm hover:shadow-md bg-white text-text"
-                    {...field}
-                  />
-                )}
-              />
-              <div className="absolute right-2 top-1/2 -translate-y-1/2">
-                <button
-                  className={cn(
-                    'p-2 bg-primary text-white rounded-xl hover:bg-primary-hover transition-colors flex items-center',
-                    { 'cursor-not-allowed': loading },
-                  )}
-                  type={'submit'}
-                  disabled={loading}
-                >
-                  {loading
-                    ? (<Spinner color="white" size={'sm'} />)
-                    : (<ArrowRightIcon className="w-4 h-4 sm:w-5 sm:h-5" />)
-                  }
-                </button>
+        <motion.div
+          className="w-full max-w-2xl px-4 sm:px-6"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+        >
+          <div className="relative group">
+            <form onSubmit={handleSubmit(onSubmit, onSubmitInvalid)} className={"flex flex-col gap-5 w-full"}>
+              <div className={"w-full flex justify-center items-center"}>
               </div>
-            </div>
+              <div className={"relative flex flex-col group border rounded-2xl overflow-hidden border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary-hover focus:border-transparent transition-all duration-300 ease-in-out shadow-sm hover:shadow-md bg-white"}>
+                <Controller
+                  name={"prompt"}
+                  control={control}
+                  render={({ field }) => (
+                    <input
+                      autoComplete={"off"}
+                      autoCapitalize={"off"}
+                      autoCorrect={"off"}
+                      spellCheck={"false"}
+                      type="text"
+                      placeholder="Hôm nay bạn muốn ăn gì?"
+                      className=" w-full px-4 sm:px-6 py-3 sm:py-3 text-base sm:text-lg outline-none text-text"
+                      {...field}
+                    />
+                  )}
+                />
+                <div className="flex justify-between gap-2.5 p-3">
+                  <Controller
+                    control={control}
+                    name={"type"}
+                    render={({ field }) => (
+                      <Select
+                        classNames={{
+                          base: "max-w-[150px]",
+                          trigger: "h-8 border-none shadow-none bg-transparent text-primary",
+                          // listbox: "w-[150px] max-w-[150px]",
+                        }}
+                        popoverProps={{
+                          classNames: {
+                            base: "before:bg-primary",
+                            content: "p-0 border-small",
+                          },
+                        }}
+                        listboxProps={{
+                          itemClasses: {
+                            base: [
+                              // "rounded-md",
+                              "text-default-500",
+                              "transition-opacity",
+                              "data-[hover=true]:text-text-light",
+                              "data-[hover=true]:!bg-primary",
+                              // "dark:data-[hover=true]:bg-default-50",
+                              "data-[selectable=true]:focus:bg-default-50",
+                              "data-[pressed=true]:opacity-70",
+                              "data-[focus-visible=true]:ring-default-500",
+                            ],
+                          },
+                        }}
+                        items={queryModeOptions}
+                        onSelectionChange={(item) => {
+                          const mode = Object.values(item)[0] as "random" | "ai-agent";
+                          field.onChange(mode);
+                        }}
+                        radius={"sm"}
+                        labelPlacement="outside"
+                        placeholder="Chọn chế độ"
+                        color={"primary"}
+                        variant="bordered"
+                        renderValue={(items) => {
+                          return items.map((item) => (
+                            <div key={item.key} className="flex gap-2 items-center">
+                              {item.data?.icon && <item.data.icon className="text-primary-hover w-5 h-5" />}
+                              <span className="text-primary-hover">{item.data?.label}</span>
+                            </div>
+                          ));
+                        }}
+                      >
+                        {(render) => (
+                          <SelectItem
+                            key={render.value}
+                            textValue={render.label}
+                          >
+                            <div className="flex gap-2 items-center">
+                              <render.icon className="w-5 h-5" />
+                              <span>{render.label}</span>
+                            </div>
+                          </SelectItem>
+                        )}
+                      </Select>
+                    )}
+                  />
+                  <button
+                    className={cn(
+                      'w-10 h-10 aspect-square bg-primary text-white rounded-xl hover:bg-primary-hover transition-colors flex items-center justify-center cursor-pointer group',
+                      { 'cursor-not-allowed': loading },
+                    )}
+                    type={'submit'}
+                    disabled={loading}
+                  >
+                    {loading
+                      ? (<Spinner color="white" size={'sm'} />)
+                      : (<ArrowRightIcon className="w-4 h-4 sm:w-5 sm:h-5 group-hover:scale-110 transition-all" />)
+                    }
+                  </button>
+                </div>
+              </div>
 
-          </form>
-        </div>
-      </motion.div>
+            </form>
+          </div>
+        </motion.div>
       </div>
 
       <div ref={recipeWrappedRef} className={'relative flex flex-col items-center justify-center px-4 sm:px-6 z-10'}>
         {message && (
-          <div className={'relative mb-16 flex flex-col justify-center items-center'}>
+          <div className={'relative mb-5 flex flex-col justify-center items-center'}>
             <h1 className="text-xl font-bold text-center mb-4">
-              Dựa trên câu hỏi của Trup, đây là gợi ý của AI Agent
+              Dựa trên yêu cầu của bạn, tôi đã tìm thấy một số công thức nấu ăn:
             </h1>
             {/*<h2 className={'text-lg font-normal text-center text-zinc-600 mb-8'}>*/}
 
@@ -242,7 +270,7 @@ const MainHero = () => {
             author={"AI Agent"}
           />
         )}
-
+        <div className='my-5' />
         {recipeList.length > 0 && (
           <RecipeList recipes={recipeList} />
         )}

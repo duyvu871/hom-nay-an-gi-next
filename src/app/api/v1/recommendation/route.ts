@@ -88,6 +88,8 @@ export async function POST(req: NextRequest) {
 			const embedQuery = await queryRecipe({
 				ingredients: embedIngredientVector,
 				name: embedNameVector,
+				ingredientString: embedding.ingredient,
+				nameString: embedding.name,
 			});
 
 			const success = new Success({
